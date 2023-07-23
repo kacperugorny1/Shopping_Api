@@ -13,6 +13,8 @@ namespace Shopping.Data{
         public virtual DbSet<Auth>? Auth {get;set;}
         public virtual DbSet<Payment>? Payments {get;set;}
 
+        public virtual DbSet<PaymentConcanated>? PaymentsConcanated {get;set;}
+        
 
 
         
@@ -38,6 +40,10 @@ namespace Shopping.Data{
 
             modelBuilder.Entity<Payment>()
                 .ToTable("Payments","SHOPPING")
+                .HasKey(u => u.PayId);
+            
+            modelBuilder.Entity<PaymentConcanated>()
+                .ToTable("PaymentsConcanated", "SHOPPING")
                 .HasKey(u => u.PayId);
             }
 

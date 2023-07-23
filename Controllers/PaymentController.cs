@@ -32,7 +32,6 @@ public class PaymentController : ControllerBase{
 
         [HttpPost]
         public IActionResult AddPayment(IEnumerable<PaymentForm> payments){
-
             foreach(PaymentForm payment in payments){    
                 Payment paymentToDb = new(){
                     PayId = 0,
@@ -41,9 +40,23 @@ public class PaymentController : ControllerBase{
                     Cost = payment.Cost,
                     DateAdded = DateTime.Now
                 };
+                
+                PaymentConcanated? paymentConcInDb = _entityFramework.PaymentsConcanated?.SingleOrDefault(u =>
+                (u.ToWhoId == payment.ToWhoId && u.WhoId == payment.WhoId));
+                if(paymentConcInDb != null)
+                    _entityFramework.PaymentsConcanated?.Remove(paymentConcInDb);
+                
+                
+                PaymentConcanated paymentConcToDb = new(){
+                    PayId = 0,
+                    ToWhoId = payment.ToWhoId,
+                    WhoId = payment.WhoId,
+                    Cost = payment.Cost + (paymentConcInDb == null?0:paymentConcInDb.Cost)
+                };
+                _entityFramework.Add(paymentConcToDb);
                 _entityFramework.Add(paymentToDb);
             }
-            if(_entityFramework.SaveChanges() == payments.Count())
+            if(_entityFramework.SaveChanges() == payments.Count() * 2)
                 return Ok();
             throw new Exception("Falied to add payments");
         }
