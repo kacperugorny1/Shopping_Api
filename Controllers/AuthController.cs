@@ -71,7 +71,7 @@ namespace Shopping.Controllers{
         [AllowAnonymous]
         [HttpPost("Login")]
         public IActionResult Login(LoginForm Form){
-            Auth? DbInfo = _entityFramework.Auth.SingleOrDefault(u => u.Email == Form.Email);
+            Auth? DbInfo = _entityFramework.Auth?.SingleOrDefault(u => u.Email == Form.Email);
             if(DbInfo == null)
                 return StatusCode(401, "Wrong credentials");
 

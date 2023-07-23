@@ -1,10 +1,10 @@
 
 namespace Shopping.Models{
     public partial class Payment{
-        int PayId {get; set;}
-        int WhoId  {get; set;}
-        int ToWhoId {get; set;}
-        decimal Cost {get; set;}
-        DateTime DateAdded {get; set;}
+        public int PayId {get; set;}
+        public int WhoId  {get; set;}
+        public int ToWhoId {get; set;}
+        public decimal Cost {get; set;}
+        public DateTime DateAdded {get; set;}
     }
 }

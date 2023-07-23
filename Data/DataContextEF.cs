@@ -11,6 +11,7 @@ namespace Shopping.Data{
         }
         public virtual DbSet<User>? Users {get;set;}
         public virtual DbSet<Auth>? Auth {get;set;}
+        public virtual DbSet<Payment>? Payments {get;set;}
 
 
 
@@ -35,6 +36,9 @@ namespace Shopping.Data{
                 .ToTable("Auth", "SHOPPING")
                 .HasKey(u => u.Email);
 
+            modelBuilder.Entity<Payment>()
+                .ToTable("Payments","SHOPPING")
+                .HasKey(u => u.PayId);
             }
 
     }

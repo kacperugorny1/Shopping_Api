@@ -29,7 +29,7 @@ builder.Services.AddCors(options => {
 
 
 // an authentication
-string? tokenKeyString = builder.Configuration.GetSection("AppSettings:TokenKey").Value;
+string? tokenKeyString = builder.Configuration.GetSection("TokenKey").Value;
 
 builder.Services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme)
     .AddJwtBearer(options=> {
