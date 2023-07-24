@@ -6,7 +6,6 @@ using Microsoft.AspNetCore.Authorization;
 
 namespace Shopping.Controllers;
 // TO DO 
-// 2nd TABLE WItH CONCANATED USERS TO PAY - WHOLE PRIZE TO PAY !!!
 [Authorize]
 [ApiController]
 [Route("[controller]")]
@@ -29,8 +28,16 @@ public class PaymentController : ControllerBase{
             return _entityFramework.Payments?.Where(u => u.WhoId == userId);
         }
 
+        [HttpGet("GetPaymentsForMe")]
+        public IEnumerable<Payment>? GetPaymentsForMe(){
+            int userId;
+            if(!Int32.TryParse(User.FindFirst("userId")?.Value, out userId))
+                throw new Exception("Falied to parse userId");
+            return _entityFramework.Payments?.Where(u => u.ToWhoId == userId);
+        }
 
-        [HttpPost]
+
+        [HttpPut]
         public IActionResult AddPayment(IEnumerable<PaymentForm> payments){
             foreach(PaymentForm payment in payments){    
                 Payment paymentToDb = new(){
@@ -60,5 +67,4 @@ public class PaymentController : ControllerBase{
                 return Ok();
             throw new Exception("Falied to add payments");
         }
-
 }
