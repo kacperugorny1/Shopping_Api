@@ -21,23 +21,23 @@ public class PaymentController : ControllerBase{
         }
 
         [HttpGet("GetMyPayments")]
-        public IEnumerable<Payment>? GetMyPayments(){
+        public IEnumerable<PaymentConcanated>? GetMyPayments(){
             int userId; 
             if(!Int32.TryParse(User.FindFirst("userId")?.Value, out userId))
                 throw new Exception("Falied to parse userId");
-            return _entityFramework.Payments?.Where(u => u.WhoId == userId);
+            return _entityFramework.PaymentsConcanated?.Where(u => u.WhoId == userId);
         }
 
         [HttpGet("GetPaymentsForMe")]
-        public IEnumerable<Payment>? GetPaymentsForMe(){
+        public IEnumerable<PaymentConcanated>? GetPaymentsForMe(){
             int userId;
             if(!Int32.TryParse(User.FindFirst("userId")?.Value, out userId))
                 throw new Exception("Falied to parse userId");
-            return _entityFramework.Payments?.Where(u => u.ToWhoId == userId);
+            return _entityFramework.PaymentsConcanated?.Where(u => u.ToWhoId == userId);
         }
 
 
-        [HttpPut]
+        [HttpPut("AddPayment")]
         public IActionResult AddPayment(IEnumerable<PaymentForm> payments){
             foreach(PaymentForm payment in payments){    
                 Payment paymentToDb = new(){
@@ -63,8 +63,28 @@ public class PaymentController : ControllerBase{
                 _entityFramework.Add(paymentConcToDb);
                 _entityFramework.Add(paymentToDb);
             }
-            if(_entityFramework.SaveChanges() == payments.Count() * 2)
+            if(_entityFramework.SaveChanges() > 0)
                 return Ok();
             throw new Exception("Falied to add payments");
+        }
+                
+        [HttpPut("MakeAPayment")]
+        public IActionResult MakeAPayment(PayingForm payment){
+            int userId; 
+            if(!Int32.TryParse(User.FindFirst("userId")?.Value, out userId))
+                throw new Exception("Falied to parse userId");
+            foreach(PaymentConcanated paymentInDb in _entityFramework?.PaymentsConcanated){
+                if(paymentInDb.ToWhoId == payment.ToWhoId && paymentInDb.WhoId == userId)
+                    paymentInDb.Cost -= payment.Cost;
+                if(paymentInDb.Cost == 0)
+                    _entityFramework.Remove(paymentInDb);
+            }
+
+            if(_entityFramework.SaveChanges() > 0)
+                return Ok();
+            throw new Exception("Falied to make a payment");
+            
+            
+
         }
 }
