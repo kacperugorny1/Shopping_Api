@@ -47,21 +47,24 @@ public class PaymentController : ControllerBase{
                 Cost = payment.Cost,
                 DateAdded = DateTime.Now
             };
+            _entityFramework.Add(paymentToDb);
             
             PaymentConcanated? paymentConcInDb = _entityFramework.PaymentsConcanated?.SingleOrDefault(u =>
             (u.ToWhoId == payment.ToWhoId && u.WhoId == payment.WhoId));
-            if(paymentConcInDb != null)
-                _entityFramework.PaymentsConcanated?.Remove(paymentConcInDb);
-            
-            
-            PaymentConcanated paymentConcToDb = new(){
-                PayId = 0,
-                ToWhoId = payment.ToWhoId,
-                WhoId = payment.WhoId,
-                Cost = payment.Cost + (paymentConcInDb == null?0:paymentConcInDb.Cost)
-            };
-            _entityFramework.Add(paymentConcToDb);
-            _entityFramework.Add(paymentToDb);
+            // if(paymentConcInDb != null)
+            //     _entityFramework.PaymentsConcanated?.Remove(paymentConcInDb);
+            if(paymentConcInDb == null){
+                PaymentConcanated paymentConcToDb = new(){
+                    PayId = 0,
+                    ToWhoId = payment.ToWhoId,
+                    WhoId = payment.WhoId,
+                    Cost = payment.Cost
+                };
+                _entityFramework.Add(paymentConcToDb);
+            }
+            else{
+                paymentConcInDb.Cost += payment.Cost;
+            }
         }
         if(_entityFramework.SaveChanges() > 0)
             return Ok();
