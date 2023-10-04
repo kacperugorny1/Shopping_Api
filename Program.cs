@@ -32,7 +32,11 @@ builder.Services.AddCors(options => {
 string? tokenKeyString = builder.Configuration.GetSection("TokenKey").Value;
 
 builder.Services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme)
-    .AddJwtBearer(options=> {
+    //Cookie authentication
+    .AddCookie(options =>{
+        options.Cookie.Name = "token";
+    })
+    .AddJwtBearer(options => {
         options.TokenValidationParameters = new TokenValidationParameters(){
             ValidateIssuerSigningKey = true,
             IssuerSigningKey = new SymmetricSecurityKey(
@@ -41,6 +45,14 @@ builder.Services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme)
                 )),
             ValidateIssuer = false,
             ValidateAudience = false
+        };
+        //Cookie authetication
+        options.Events = new JwtBearerEvents(){
+            OnMessageReceived = context =>
+            {
+                context.Token = context.Request.Cookies["token"];
+                return Task.CompletedTask;
+            }
         };
     });
 

@@ -16,6 +16,7 @@ namespace Shopping.Controllers{
     [Authorize]
     [ApiController]
     [Route("[controller]")]
+    
     public class AuthController : ControllerBase{
         private readonly DataContextEF _entityFramework;
         private readonly AuthHelper _authHelper;
@@ -90,10 +91,23 @@ namespace Shopping.Controllers{
 
             int userId = _entityFramework.Users.Where(u => u.Email == Form.Email).First().UserId;
 
-            if(Convert.ToBase64String(passwordHash) == Convert.ToBase64String(DbInfo.PasswordHash))
-                return Ok(new Dictionary<string, string>{
-                    {"token", _authHelper.CreateToken(userId)}
+            if(Convert.ToBase64String(passwordHash) == Convert.ToBase64String(DbInfo.PasswordHash)){
+                //new code - cookie creation next 10 lines
+                dynamic token = _authHelper.CreateToken(userId);
+                HttpContext.Response.Cookies.Append("token", token,
+                new CookieOptions{
+                   Expires = DateTime.Now.AddDays(7),
+                   HttpOnly = true,
+                   Secure = true,
+                   IsEssential = true,
+                   SameSite = SameSiteMode.None
                 });
+
+                // this can be just Ok() but for now i left this
+                return Ok(new Dictionary<string, string>{
+                    {"token", token}
+                });
+            }
             
             return StatusCode(401 ,"Wrong Credentials");
 
@@ -112,3 +126,50 @@ namespace Shopping.Controllers{
 
     }
 }
+
+
+
+// just generating jwt no cookie
+// [AllowAnonymous]
+//         [HttpPost("Login")]
+//         public IActionResult Login(LoginForm Form){
+//             Auth? DbInfo = _entityFramework.Auth?.SingleOrDefault(u => u.Email == Form.Email);
+//             if(DbInfo == null)
+//                 return StatusCode(401, "Wrong credentials");
+
+//             byte[] passwordHash = _authHelper.GetPasswordHash(Form.Password, DbInfo.PasswordSalt);
+
+
+//             //Dont work
+//             //if(passwordHash == DbInfo.PasswordHash)
+            
+            
+//             // both works but convert looks cleaner but probably slower
+//             // for(int i = 0; i < passwordHash.Length; ++i){
+//             //     if(passwordHash[i] != DbInfo.PasswordHash[i])
+//             //         return StatusCode(401 ,"Wrong Password");
+//             // }
+
+//             int userId = _entityFramework.Users.Where(u => u.Email == Form.Email).First().UserId;
+
+//             if(Convert.ToBase64String(passwordHash) == Convert.ToBase64String(DbInfo.PasswordHash))
+//                 return Ok(new Dictionary<string, string>{
+//                     {"token", _authHelper.CreateToken(userId)}
+//                 });
+            
+//             return StatusCode(401 ,"Wrong Credentials");
+
+            
+//         }
+
+//         [HttpGet("RefreshToken")]
+//         public string RefreshToken(){
+            
+//             int userId = _entityFramework.Users.Where(u => u.UserId == Int32.Parse(User.FindFirst("userId").Value)).First().UserId;
+
+//             return _authHelper.CreateToken(userId);
+//         }
+
+       
+
+//     }
