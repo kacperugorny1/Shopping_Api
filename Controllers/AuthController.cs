@@ -136,7 +136,11 @@ namespace Shopping.Controllers{
             return Ok();
         }
 
-       
+        
+        [HttpGet("IsLogged")]
+        public IActionResult IsLogged(){
+            return Ok();
+        } 
 
     }
 }

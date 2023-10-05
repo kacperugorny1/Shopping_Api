@@ -14,13 +14,13 @@ builder.Services.AddSwaggerGen();
 // corses
 builder.Services.AddCors(options => {
     options.AddPolicy("DevCors", (corsBuilder)=>{
-        corsBuilder.WithOrigins("http://localhost:4200, http://localhost:3000, http://localhost:8000")
+        corsBuilder.WithOrigins("http://localhost:4200, http://localhost:3000, http://localhost:8000, http://localhost:5173")
             .AllowAnyMethod()
             .AllowAnyHeader()
             .AllowCredentials();
     });
     options.AddPolicy("ProdCors", (corsBuilder)=>{
-        corsBuilder.WithOrigins("https://myProductionSite.com")
+        corsBuilder.WithOrigins("kacpikoks11.github.io/shoppingApp")
             .AllowAnyMethod()
             .AllowAnyHeader()
             .AllowCredentials();
