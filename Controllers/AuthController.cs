@@ -122,6 +122,20 @@ namespace Shopping.Controllers{
             return _authHelper.CreateToken(userId);
         }
 
+        [HttpGet("Logout")]
+        public IActionResult Logout(){
+            HttpContext.Response.Cookies.Append("token", "",
+                new CookieOptions{
+                   Expires = DateTime.Now.AddDays(7),
+                   HttpOnly = true,
+                   Secure = true,
+                   IsEssential = true,
+                   SameSite = SameSiteMode.None
+                });
+
+            return Ok();
+        }
+
        
 
     }

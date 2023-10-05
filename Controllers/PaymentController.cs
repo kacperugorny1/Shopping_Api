@@ -15,7 +15,7 @@ public class PaymentController : ControllerBase{
         _entityFramework = new(config);
     }
 
-    [HttpGet("GetAllPayments"), AllowAnonymous]
+    [HttpGet("GetAllPayments")]
     public IEnumerable<Payment>? GetAllPayments(){
         return _entityFramework.Payments;
     }
