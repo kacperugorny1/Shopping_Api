@@ -17,7 +17,8 @@ builder.Services.AddCors(options => {
         corsBuilder.WithOrigins("http://localhost:4200, http://localhost:3000, http://localhost:8000, http://localhost:5173")
             .AllowAnyMethod()
             .AllowAnyHeader()
-            .AllowCredentials();
+            .AllowCredentials()
+            ;
     });
     options.AddPolicy("ProdCors", (corsBuilder)=>{
         corsBuilder.WithOrigins("kacpikoks11.github.io/shoppingApp")

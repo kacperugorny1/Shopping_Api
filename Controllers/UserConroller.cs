@@ -19,6 +19,7 @@ public class UserController : ControllerBase
 
     [HttpGet("GetUsers")]
     public IEnumerable<User>? GetUsers(){
+        
         return _entityFramework.Users;
     }
 

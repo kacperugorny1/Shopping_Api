@@ -102,7 +102,6 @@ namespace Shopping.Controllers{
                    IsEssential = true,
                    SameSite = SameSiteMode.None
                 });
-
                 // this can be just Ok() but for now i left this
                 return Ok(new Dictionary<string, string>{
                     {"token", token}
@@ -139,7 +138,7 @@ namespace Shopping.Controllers{
         
         [HttpGet("IsLogged")]
         public IActionResult IsLogged(){
-            return Ok();
+            return Ok(0);
         } 
 
     }
